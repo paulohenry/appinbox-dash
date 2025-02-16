@@ -1,18 +1,22 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
-import { useTranslation } from 'react-i18next'
 import { AuthLayout } from '../components/AuthLayout'
 import { PhoneInput } from '../components/PhoneInput'
-import { ValidationModal } from '../components/ValidationModal'
-import { handleGoogleLogin } from '../services/auth'
+import { VerificationModal } from '../components/VerificationModal'
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Invalid phone number'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number')
+    .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character'),
   confirmPassword: z.string(),
   termsAccepted: z.boolean().refine((val) => val, 'You must accept the terms'),
   privacyAccepted: z.boolean().refine((val) => val, 'You must accept the privacy policy'),
@@ -24,15 +28,10 @@ const registerSchema = z.object({
 type RegisterForm = z.infer<typeof registerSchema>
 
 export default function Register() {
-  const { t } = useTranslation()
-  const [validationModal, setValidationModal] = useState<{
-    isOpen: boolean
-    type: 'email' | 'phone'
-    value: string
-  }>({
+  const navigate = useNavigate()
+  const [verificationModal, setVerificationModal] = useState({
     isOpen: false,
-    type: 'email',
-    value: '',
+    phoneNumber: ''
   })
 
   const {
@@ -41,32 +40,34 @@ export default function Register() {
     formState: { errors },
     watch,
     setValue,
+    trigger,
   } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(registerSchema)
   })
 
-  const onSubmit = (data: RegisterForm) => {
-    console.log('Form data:', data)
-    toast.success('Registration successful!')
-  }
-
-  const handleGoogleSuccess = async (response: any) => {
+  const onSubmit = async (data: RegisterForm) => {
     try {
-      const result = await handleGoogleLogin(response.credential)
-      if (result.user) {
-        toast.success('Successfully registered with Google!')
-      } else {
-        toast.error(result.error || 'Failed to register with Google')
-      }
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      console.log('Form submitted:', data)
+      toast.success('Registration successful!')
+      navigate('/dashboard')
     } catch (error) {
-      toast.error('An error occurred during Google registration')
+      toast.error('Registration failed')
     }
   }
 
-  const handleFieldBlur = (type: 'email' | 'phone', value: string) => {
-    if (value) {
-      setValidationModal({ isOpen: true, type, value })
+  const handlePhoneChange = async (value: string) => {
+    setValue('phone', value)
+    const isValid = await trigger('phone')
+    if (isValid && value.length >= 10) {
+      setVerificationModal({ isOpen: true, phoneNumber: value })
     }
+  }
+
+  const handlePhoneVerified = () => {
+    // Here you would typically store the verification status
+    console.log('Phone verified')
   }
 
   return (
@@ -74,19 +75,18 @@ export default function Register() {
       <div className="w-full max-w-xl space-y-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
         <div className="text-center">
           <h2 className="text-3xl font-bold dark:text-white">
-            {t('auth.create_account')}
+            Create your account
           </h2>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              {t('auth.email')}
+              Email
             </label>
             <input
               type="email"
               {...register('email')}
-              onBlur={(e) => handleFieldBlur('email', e.target.value)}
               className={`mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border ${
                 errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
               } rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:text-white`}
@@ -102,19 +102,14 @@ export default function Register() {
             </label>
             <PhoneInput
               value={watch('phone') || ''}
-              onChange={(value) => {
-                setValue('phone', value)
-                if (value.length >= 10) {
-                  handleFieldBlur('phone', value)
-                }
-              }}
+              onChange={handlePhoneChange}
               error={errors.phone?.message}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              {t('auth.password')}
+              Password
             </label>
             <input
               type="password"
@@ -178,16 +173,16 @@ export default function Register() {
             type="submit"
             className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            {t('auth.sign_up')}
+            Create Account
           </button>
         </form>
       </div>
 
-      <ValidationModal
-        isOpen={validationModal.isOpen}
-        onClose={() => setValidationModal({ ...validationModal, isOpen: false })}
-        type={validationModal.type}
-        value={validationModal.value}
+      <VerificationModal
+        isOpen={verificationModal.isOpen}
+        onClose={() => setVerificationModal({ ...verificationModal, isOpen: false })}
+        phoneNumber={verificationModal.phoneNumber}
+        onVerify={handlePhoneVerified}
       />
     </AuthLayout>
   )

@@ -1,14 +1,15 @@
-export interface GoogleUser {
+export interface SocialUser {
   email: string
-  email_verified: boolean
+  email_verified?: boolean
   name: string
-  picture: string
-  given_name: string
-  family_name: string
+  picture?: string
+  given_name?: string
+  family_name?: string
   sub: string
+  provider: 'google' | 'github' | 'twitter' | 'apple'
 }
 
 export interface AuthResponse {
-  user: GoogleUser | null
+  user: SocialUser | null
   error?: string
 }
