@@ -1,0 +1,21 @@
+{
+  "auth": {
+    "welcome_back": "Bem-vindo de volta",
+    "create_account": "Crie sua conta",
+    "no_account": "Não tem uma conta?",
+    "has_account": "Já tem uma conta?",
+    "sign_up": "Cadastre-se",
+    "sign_in": "Entrar",
+    "email": "Email",
+    "password": "Senha",
+    "or_continue_with": "Ou continue com",
+    "login_success": "Login realizado com sucesso!",
+    "login_error": "Erro ao realizar login",
+    "register_success": "Cadastro realizado com sucesso!",
+    "register_error": "Erro ao realizar cadastro"
+  },
+  "landing": {
+    "title": "AppInBox.ai",
+    "description": "Aqui suas ideias ganham vida em segundos, aproveite todo o poder do AppInBox.ai para dar vida a suas ideias e torná-las empresas lucrativas"
+  }
+}

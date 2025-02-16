@@ -1,0 +1,21 @@
+{
+  "auth": {
+    "welcome_back": "Willkommen zurück",
+    "create_account": "Konto erstellen",
+    "no_account": "Noch kein Konto?",
+    "has_account": "Bereits ein Konto?",
+    "sign_up": "Registrieren",
+    "sign_in": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "or_continue_with": "Oder fortfahren mit",
+    "login_success": "Erfolgreich angemeldet!",
+    "login_error": "Anmeldung fehlgeschlagen",
+    "register_success": "Registrierung erfolgreich!",
+    "register_error": "Registrierung fehlgeschlagen"
+  },
+  "landing": {
+    "title": "AppInBox.ai",
+    "description": "Hier werden Ihre Ideen in Sekunden lebendig. Nutzen Sie die gesamte Leistung von AppInBox.ai, um Ihre Ideen zum Leben zu erwecken und sie in profitable Unternehmen zu verwandeln"
+  }
+}
