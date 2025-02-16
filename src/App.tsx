@@ -5,6 +5,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import TwitterCallback from './pages/auth/twitter-callback'
 import AppleCallback from './pages/auth/apple-callback'
+import GitHubCallback from './pages/auth/github-callback'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/auth/twitter/callback" element={<TwitterCallback />} />
         <Route path="/auth/apple/callback" element={<AppleCallback />} />
+        <Route path="/auth/github/callback" element={<GitHubCallback />} />
       </Routes>
     </BrowserRouter>
   )

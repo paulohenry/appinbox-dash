@@ -18,6 +18,47 @@ export const handleGoogleLogin = async (credential: string): Promise<AuthRespons
   }
 }
 
+export const handleGitHubLogin = async (): Promise<AuthResponse> => {
+  try {
+    const clientId = 'YOUR_GITHUB_CLIENT_ID'
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/github/callback`)
+    const scope = 'read:user user:email'
+    const state = crypto.randomUUID()
+    
+    // Store state in sessionStorage
+    sessionStorage.setItem('github_oauth_state', state)
+
+    // Construct GitHub OAuth URL
+    const authUrl = `https://github.com/login/oauth/authorize?` +
+      `client_id=${clientId}` +
+      `&redirect_uri=${redirectUri}` +
+      `&scope=${scope}` +
+      `&state=${state}`
+
+    // Open GitHub login in a popup
+    const width = 600
+    const height = 600
+    const left = window.screenX + (window.outerWidth - width) / 2
+    const top = window.screenY + (window.outerHeight - height) / 2
+    
+    window.open(
+      authUrl,
+      'GitHub Login',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    )
+
+    return {
+      user: null,
+      error: 'Awaiting GitHub authentication'
+    }
+  } catch (error) {
+    return {
+      user: null,
+      error: 'Failed to process GitHub login'
+    }
+  }
+}
+
 export const handleTwitterLogin = async (): Promise<AuthResponse> => {
   try {
     // X (Twitter) OAuth 2.0 Configuration
